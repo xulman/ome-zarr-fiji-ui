@@ -1,0 +1,183 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>30.0.0</version>
+	</parent>
+
+	<groupId>sc.fiji</groupId>
+	<artifactId>ome-zarr-fiji-ui</artifactId>
+	<version>0.1.0-SNAPSHOT</version>
+
+	<name>OME.Zarr Fiji UI and I/O</name>
+	<description>GUI Dialog to show structure of an ome.zarr dataset and to allow the user to cherry-pick image of interest, in Fiji.</description>
+	<url>https://github.com/xulman/ome-zarr-fiji-ui</url>
+	<inceptionYear>2022</inceptionYear>
+
+	<licenses>
+		<license>
+			<name>Simplified BSD License</name>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>SciJava</name>
+		<url>https://scijava.org/</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<id>TBA</id>
+			<name>TBA</name>
+			<url>www.somewhere.net</url>
+			<roles>
+				<role>founder</role>
+				<role>lead</role>
+				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<contributors>
+		<!-- NB: Need at least one element to override the parent. See: https://issues.apache.org/jira/browse/MNG-5220 -->
+		<contributor>
+			<name>None</name>
+		</contributor>
+	</contributors>
+
+	<mailingLists>
+		<mailingList>
+			<name>Image.sc Forum</name>
+				<archive>https://forum.image.sc/</archive>
+		</mailingList>
+	</mailingLists>
+
+	<!-- ====================================== -->
+
+	<scm>
+		<connection>scm:git:git://github.com/xulman/ome-zarr-fiji-ui</connection>
+		<developerConnection>scm:git:git@github.com:xulman/ome-zarr-fiji-ui</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://github.com/xulman/ome-zarr-fiji-ui</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/xulman/ome-zarr-fiji-ui/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>none</system>
+	</ciManagement>
+
+	<distributionManagement>
+		<repository>
+			<id>it4i</id>
+			<url>https://artifactory.cs.vsb.cz/it4i/</url>
+		</repository>
+	</distributionManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>2.2.4</version>
+				<executions>
+					<execution>
+						<phase>validate</phase>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+					<generateGitPropertiesFile>true</generateGitPropertiesFile>
+					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+					<includeOnlyProperties>
+						<includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
+						<includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
+					</includeOnlyProperties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>sh</executable>
+					<arguments>
+						<argument>-c</argument>
+						<!--suppress UnresolvedMavenProperty -->
+						<argument>rm -v ${project.build.outputDirectory}/COMMITrev_*; touch ${project.build.outputDirectory}/COMMITrev_${git.commit.id.abbrev};</argument>
+					</arguments>
+				</configuration>
+			</plugin>
+		</plugins>
+		<!-- later for example data ...
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
+				<directory>src/main/resources-${stage}</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		... later for example data -->
+	</build>
+
+	<packaging>jar</packaging>
+
+	<!-- ====================================== -->
+
+	<properties>
+		<package-name>sc.fiji.ome.zarr.fiji.ui</package-name>
+
+		<license.licenseName>bsd_2</license.licenseName>
+		<license.projectName>OME.Zarr Fiji UI and I/O</license.projectName>
+		<license.organizationName>SciJava</license.organizationName>
+		<license.copyrightOwners>SciJava developers</license.copyrightOwners>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<java.version>11</java.version>
+		<maven.compiler.release>8</maven.compiler.release>
+
+		<bigdataviewer-core.version>10.2.0</bigdataviewer-core.version>
+		<bigdataviewer-vistools.version>1.0.0-beta-28</bigdataviewer-vistools.version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>scijava.public</id>
+			<url>https://maven.scijava.org/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>it4i</id>
+			<url>https://artifactory.cs.vsb.cz/it4i/</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej</artifactId>
+		</dependency>
+	</dependencies>
+</project>
