@@ -1,6 +1,8 @@
 package sc.fiji.ome.zarr.fiji.ui;
 
-import net.imagej.ImageJ;
+import net.imagej.legacy.ui.LegacyUI;
+
+import org.scijava.Context;
 import org.scijava.log.LogService;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -9,6 +11,7 @@ import org.scijava.io.IOPlugin;
 import org.scijava.io.AbstractIOPlugin;
 import org.scijava.io.location.FileLocation;
 import org.scijava.io.location.Location;
+import org.scijava.ui.UIService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,8 +55,7 @@ public class DndHandler extends AbstractIOPlugin<Object> {
 
 	//--------------------------------------------------------
 	public static void main(String[] args) {
-		ImageJ ij = new ImageJ();
-		ij.ui().showUI();
-		ij.ui().show("try drag-and-dropping a .zarr _file_ ....");
+		final Context context = new Context();
+		context.service( UIService.class ).showUI( LegacyUI.NAME );
 	}
 }
