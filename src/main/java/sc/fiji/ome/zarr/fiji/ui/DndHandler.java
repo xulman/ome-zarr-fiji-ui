@@ -13,6 +13,7 @@ import org.scijava.io.location.FileLocation;
 import org.scijava.io.location.Location;
 import org.scijava.ui.UIService;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -24,9 +25,10 @@ public class DndHandler extends AbstractIOPlugin<Object> {
 
 	@Override
 	public boolean supportsOpen(Location source) {
-		logService.info("DnDHandler was questioned: "+source.getURI().getPath());
+		final String sourcePath = source.getURI().getPath();
+		logService.info("DnDHandler was questioned: "+sourcePath);
 		if (!(source instanceof FileLocation)) return false;
-		if (!(source.getName().endsWith(".zarr"))) return false;
+		if (!(new File(sourcePath, ".zgroup").exists() || new File(sourcePath, ".zarray").exists() ) ) return false;
 		return true;
 	}
 
@@ -40,7 +42,7 @@ public class DndHandler extends AbstractIOPlugin<Object> {
 		//
 		//we've been given a .zarr _file_, a special "tag" file inside .zarr,
 		//its parent folder is the true "handle" of this .zarr
-		new DialogAroundZarr(fsource.getFile().getParentFile().toPath());
+		new DialogAroundZarr(fsource.getFile().toPath());
 		return FAKE_INPUT;
 	}
 
