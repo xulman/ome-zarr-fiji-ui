@@ -203,5 +203,27 @@
 			<groupId>org.scijava</groupId>
 			<artifactId>scijava-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+			<version>1.x-SNAPSHOT</version>
+			<systemPath>/home/ulman/.m2/repository/net/imagej/ij/1.x-SNAPSHOT/ij-1.x-SNAPSHOT.jar</systemPath>
+			<scope>system</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej-legacy</artifactId>
+			<version>0.38.0</version>
+		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij1-patcher</artifactId>
+			<version>1.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>IO_</artifactId>
+			<version>4.2.0</version>
+		</dependency>
 	</dependencies>
 </project>

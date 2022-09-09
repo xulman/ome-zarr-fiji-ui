@@ -32,7 +32,7 @@ public class DialogAroundZarr {
 					+zarrFolder.toAbsolutePath()+" or it is not a folder."
 					+" I need a top-level _folder_ to open.");
 
-		if (!zarrFolder.toString().endsWith(".ome.zarr"))
+		if (!ZarrCommandPlugin.isZarrFolder(zarrFolder))
 			throw new IllegalArgumentException("The folder "
 					+zarrFolder.toAbsolutePath()+" is likely not a .ome.zarr");
 

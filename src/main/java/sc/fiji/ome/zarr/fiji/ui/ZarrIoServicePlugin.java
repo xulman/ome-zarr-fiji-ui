@@ -10,9 +10,9 @@ import org.scijava.io.IOPlugin;
 import org.scijava.io.AbstractIOPlugin;
 import org.scijava.io.location.FileLocation;
 import org.scijava.io.location.Location;
-import org.scijava.ui.UIService;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @Plugin(type = IOPlugin.class)
@@ -29,9 +29,11 @@ public class ZarrIoServicePlugin extends AbstractIOPlugin<Object> {
 
 	@Override
 	public boolean supportsOpen(Location source) {
-		logService.info("ZarrIoServicePlugin was questioned: "+source.getURI().getPath());
+		final String sourcePath = source.getURI().getPath();
+		logService.info("ZarrIoServicePlugin was questioned: "+sourcePath);
+
 		if (!(source instanceof FileLocation)) return false;
-		if (!(source.getName().endsWith(".zarr"))) return false;
+		if ( !ZarrCommandPlugin.isZarrFolder( Paths.get(source.getURI()) ) ) return false;
 		return true;
 	}
 
