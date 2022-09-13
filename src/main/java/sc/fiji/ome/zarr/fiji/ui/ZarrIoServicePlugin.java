@@ -30,7 +30,7 @@ public class ZarrIoServicePlugin extends AbstractIOPlugin<Object> {
 	@Override
 	public boolean supportsOpen(Location source) {
 		final String sourcePath = source.getURI().getPath();
-		logService.info("ZarrIoServicePlugin was questioned: "+sourcePath);
+		//logService.info("ZarrIoServicePlugin was questioned: "+sourcePath);
 
 		if (!(source instanceof FileLocation)) return false;
 		if ( !ZarrCommandPlugin.isZarrFolder( Paths.get(source.getURI()) ) ) return false;
@@ -39,16 +39,13 @@ public class ZarrIoServicePlugin extends AbstractIOPlugin<Object> {
 
 	@Override
 	public Object open(Location source) throws IOException {
-		logService.info("ZarrIoServicePlugin was asked to open: "+source.getURI().getPath());
+		//logService.info("ZarrIoServicePlugin was asked to open: "+source.getURI().getPath());
 		final FileLocation fsource = source instanceof FileLocation ? (FileLocation)source : null;
 		if (fsource == null) return null; //NB: shouldn't happen... (in theory)
 
 		logService.info("ZarrIoServicePlugin is going to open: "+fsource.getFile().getAbsolutePath());
-		//optionsService.getOptions(ZarrIoServicePlugin.class, )
-		boolean openAlwaysFirst = false; //TBA: retrieve from Fiji preferences
 		cmdService.run(ZarrCommandPlugin.class,true,
-				"zarrFolder", fsource.getFile(),
-				"openFirstItemNow", openAlwaysFirst);
+				"zarrFolder", fsource.getFile() );
 		return FAKE_INPUT;
 	}
 

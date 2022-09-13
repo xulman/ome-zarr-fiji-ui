@@ -1,39 +1,46 @@
 package sc.fiji.ome.zarr.fiji.ui;
 
-import org.scijava.ItemIO;
-import org.scijava.ItemVisibility;
+import org.scijava.Context;
 import org.scijava.command.Command;
 import org.scijava.plugin.Plugin;
 import org.scijava.plugin.Parameter;
+import org.scijava.ui.UIService;
 import org.scijava.widget.FileWidget;
 import org.scijava.log.LogService;
-import net.imagej.Dataset;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.embl.mobie.io.ome.zarr.hackathon.DefaultPyramidal5DImageData;
+import org.embl.mobie.io.ome.zarr.hackathon.MultiscaleImage;
+import bdv.util.BdvFunctions;
+import net.imagej.Dataset;
+
 @Plugin(type = Command.class, menuPath = "File > Import > OME.Zarr...")
 public class ZarrCommandPlugin implements Command {
-	@Parameter(style = FileWidget.DIRECTORY_STYLE, label = "Folder with OME.Zarr data:")
+	@Parameter(style = FileWidget.DIRECTORY_STYLE,
+			label = "Folder with OME.Zarr data:",
+			description = "Please, point only on the top level folder of the OME.Zarr container.")
 	File zarrFolder;
 
 	@Parameter(required = false,
-			label = "Read directly the first item:",
-			description = "When opening a multi-item OME.Zarr, show directly the first item rather than a dialog.")
-	Boolean openFirstItemNow = true;
+			label = "Open as virtual stack:",
+			description = "This opens the standard Fiji image viewing window.")
+	Boolean openInIJ = true;
 
 	@Parameter(required = false,
-			label = "Or, Read directly this item:",
-			description = "When opening a multi-item OME.Zarr, show directly the given item rather than a dialog.")
-	String openThisItemNow = "";
+			label = "Open in BigDataViewer:",
+			description = "This opens the standard Fiji image viewing window.")
+	Boolean openInBDV = true;
 
 	@Parameter(required = false,
-			label = "Or, by not filling anything open the dialog...",
-			visibility = ItemVisibility.MESSAGE)
-	final String dialogInfoMsg = null;
-
-	@Parameter(type = ItemIO.OUTPUT)
-	Dataset dataset;
+			label = "What to do next time:",
+			choices = {
+					"Show this dialog again",
+					"Remember the checkboxes, open directly next time, show this dialog in a week again.",
+					"Remember the checkboxes, open directly next time, never show this dialog again (Edit->Options)"})
+	String futureDialogAction = "Show";
 
 	@Parameter
 	LogService logService;
@@ -49,48 +56,41 @@ public class ZarrCommandPlugin implements Command {
 		final boolean topLevelFolder = !isZarrFolder( zarrFolder.getParentFile().toPath() );
 		logService.info("Accessing " + zarrFolder.getAbsolutePath());
 		logService.info("It is a " + (topLevelFolder ? "top-level" : "nested-level") + " folder");
-
-		if (topLevelFolder) {
-			if (!openFirstItemNow && openThisItemNow.equals("")) {
-				//open the dialog to determine which item to open
-				DialogAroundZarr dg = new DialogAroundZarr(zarrFolder.toPath());
-
-				//must be obtained from the dialog:
-				if (openThisItemNow.equals("")) {
-					logService.error("Requested top-level OME.Zarr folder "
-							+ zarrFolder.getAbsolutePath() + " but haven't chosen any"
-							+ " particular item to open.");
-					return;
-				}
-
-				dataset = open(zarrFolder, openThisItemNow);
-			}
-			else {
-				dataset = openFirstItemNow ? openFirst(zarrFolder) : open(zarrFolder, openThisItemNow);
-			}
-		} else {
-			//not top-level folder:
-
-			// find top-level and request 'openThisItemNow',
-			// or open directly the 'zarrFolder' if Tischi's solution permits that
-			dataset = null;
+		//
+		if (!topLevelFolder) {
+			logService.error("I can't do yet. Please, point me on top-level folder next time.");
+			return;
 		}
+
+		openZarr(logService.context(), zarrFolder.getAbsolutePath(), openInIJ, openInBDV);
 	}
 
-	Dataset open(final File zarrFolder, final String itemName) {
-		logService.info("opening "+itemName);
-		//TBA: waits for Tischi's IO API
-		return null;
-	}
+	public static void openZarr(final Context ctx, final String topLevelPath,
+	                            final boolean showInFiji,
+	                            final boolean showInBDV) {
 
-	Dataset openFirst(final File zarrFolder) {
-		logService.info("opening the first item");
-		//TBA: waits for Tischi's IO API
-		return null;
+		final MultiscaleImage<?,?> mi = new MultiscaleImage<>(topLevelPath, null);
+		final DefaultPyramidal5DImageData<?,?> singleMI = new DefaultPyramidal5DImageData<>(ctx, topLevelPath, mi);
+		final Dataset dataset = singleMI.asDataset();
+
+		if (showInFiji) {
+			UIService ui = ctx.getService(UIService.class);
+			if (ui != null) ui.show( dataset );
+			else System.out.println("Not opening in Fiji, failed to find an available scijava UIService.");
+		}
+
+		if (showInBDV) {
+			BdvFunctions.show( dataset, topLevelPath );
+		}
 	}
 
 	public static boolean isZarrFolder(final Path zarrFolder) {
 		return ( Files.exists( zarrFolder.resolve( ".zgroup" ) ) ||
                 Files.exists( zarrFolder.resolve( ".zarray" ) ) );
+	}
+
+	public static void main(String[] args) {
+		final String path = "/home/ulman/M_TRIF_testSmall/testNew.zarr";
+		openZarr(new Context(), path, true, true);
 	}
 }
