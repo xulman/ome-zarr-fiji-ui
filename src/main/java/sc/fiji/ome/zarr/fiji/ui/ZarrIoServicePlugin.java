@@ -42,8 +42,9 @@ public class ZarrIoServicePlugin extends AbstractIOPlugin<Object> {
 		logService.debug("ZarrIoServicePlugin was asked to open: "+source.getURI().getPath());
 		final FileLocation fsource = source instanceof FileLocation ? (FileLocation)source : null;
 		if (fsource == null) return null; //NB: shouldn't happen... (in theory)
-		logService.info("ZarrIoServicePlugin is going to open: "+fsource.getFile().getAbsolutePath());
+		if (!ZarrOpenDialogPlugin.canOpenThisZarrFolder(fsource.getFile(), logService)) return null;
 
+		logService.info("ZarrIoServicePlugin is going to open: "+fsource.getFile().getAbsolutePath());
 		final String futureDialogAction =
 				prefService.get(ZarrOpenDialogPlugin.class, "futureDialogAction", ZarrOpenDialogPlugin.DIAG_ALWAYS_ASK);
 		if (futureDialogAction.equals(ZarrOpenDialogPlugin.DIAG_ALWAYS_ASK)) {
