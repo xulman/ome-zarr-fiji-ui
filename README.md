@@ -48,7 +48,7 @@ This is a result of collective work of several people noted below, during the
 [IT4Innovations National Supercomputing Centre, Ostrava, CZE](https://www.it4i.cz/en):
 
 - [forum.sc link](https://forum.image.sc/t/fiji-ngff-hackathon-sep-2022-prague-cze/69191),
-- [zulip link](https://imagesc.zulipchat.com/#narrow/stream/329366-.5B2022-09.5D-Fiji.2BNGFF-Prague-hackathon),
+- [zulip link](https://imagesc.zulipchat.com/#narrow/stream/329366-Zzz.3A-.5B2022-09.5D-Fiji.2BNGFF-Prague-hackathon),
 - [link at IT4I](https://events.it4i.cz/event/145/).
 
 The people on-site during the hackathon:</br>
