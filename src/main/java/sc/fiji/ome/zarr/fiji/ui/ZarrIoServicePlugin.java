@@ -33,7 +33,7 @@ public class ZarrIoServicePlugin extends AbstractIOPlugin<Object> {
 		//logService.info("ZarrIoServicePlugin was questioned: "+sourcePath);
 
 		if (!(source instanceof FileLocation)) return false;
-		if ( !ZarrCommandPlugin.isZarrFolder( Paths.get(source.getURI()) ) ) return false;
+		if ( !ZarrOpenDialogPlugin.isZarrFolder( Paths.get(source.getURI()) ) ) return false;
 		return true;
 	}
 
@@ -44,8 +44,6 @@ public class ZarrIoServicePlugin extends AbstractIOPlugin<Object> {
 		if (fsource == null) return null; //NB: shouldn't happen... (in theory)
 
 		logService.info("ZarrIoServicePlugin is going to open: "+fsource.getFile().getAbsolutePath());
-		cmdService.run(ZarrCommandPlugin.class,true,
-				"zarrFolder", fsource.getFile() );
 		return FAKE_INPUT;
 	}
 
