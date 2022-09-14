@@ -1,7 +1,6 @@
 package sc.fiji.ome.zarr.fiji.ui;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 
 import org.janelia.saalfeldlab.n5.bdv.N5ViewerTreeCellRenderer;
@@ -33,12 +32,9 @@ public class DialogAroundZarr {
 					+zarrFolder.toAbsolutePath()+" or it is not a folder."
 					+" I need a top-level _folder_ to open.");
 
-		if (!zarrFolder.toString().endsWith(".ome.zarr"))
+		if (!ZarrOpenDialogPlugin.isZarrFolder(zarrFolder))
 			throw new IllegalArgumentException("The folder "
 					+zarrFolder.toAbsolutePath()+" is likely not a .ome.zarr");
-
-		System.out.println("OPENING ZARR FOLDER:"+zarrFolder.toAbsolutePath());
-		//TBA! :-)
 
 		// build the dialog
 		DatasetSelectorDialog selectionDialog = new DatasetSelectorDialog(
@@ -60,14 +56,5 @@ public class DialogAroundZarr {
 
 		// parse the tree
 		selectionDialog.detectDatasets();
-	}
-
-	//--------------------------------------------------------
-	public static void main(String[] args) {
-//		final String p = "/home/ulman/M_TRIF_testSmall/orig/trif022.ome.zarr";
-		final String p = "/home/john/projects/ngff/v0.3/zyx.ome.zarr";
-		new DialogAroundZarr(Paths.get(p));
-
-//		new DialogAroundZarr(Paths.get(args[0]));
 	}
 }
