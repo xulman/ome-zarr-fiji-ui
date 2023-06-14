@@ -1,5 +1,6 @@
 package sc.fiji.ome.zarr.fiji.ui;
 
+import org.scijava.plugin.Attr;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.log.LogService;
@@ -15,7 +16,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-@Plugin(type = IOPlugin.class)
+@Plugin(type = IOPlugin.class, attrs = @Attr(name = "eager"))
 public class ZarrIoServicePlugin extends AbstractIOPlugin<Object> {
 
 	@Parameter
