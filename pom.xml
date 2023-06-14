@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>32.0.0</version>
+		<version>34.1.0</version>
 	</parent>
 
 	<groupId>sc.fiji</groupId>
@@ -158,9 +158,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
 		<maven.compiler.release>8</maven.compiler.release>
-
-		<bigdataviewer-core.version>10.2.0</bigdataviewer-core.version>
-		<bigdataviewer-vistools.version>1.0.0-beta-28</bigdataviewer-vistools.version>
 	</properties>
 
 	<repositories>
@@ -177,30 +174,8 @@
 	<dependencies>
 		<!-- environment/framework stuff -->
 		<dependency>
-			<groupId>org.scijava</groupId>
-			<artifactId>scijava-common</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>imagej</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>imagej-legacy</artifactId>
-		</dependency>
-
-		<!-- patched drag-and-drop handling of folders, and required sub-dependencies -->
-		<dependency>
 			<groupId>sc.fiji</groupId>
-			<artifactId>IO_</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>ij</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>ij1-patcher</artifactId>
+			<artifactId>fiji</artifactId>
 		</dependency>
 
 		<!-- vizu stuff -->
