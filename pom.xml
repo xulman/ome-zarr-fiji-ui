@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>34.1.0</version>
+		<version>37.0.0</version>
 	</parent>
 
 	<groupId>sc.fiji</groupId>
@@ -158,6 +158,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
 		<maven.compiler.release>8</maven.compiler.release>
+
+		<scijava-common.version>2.98.1-SNAPSHOT</scijava-common.version>
+		<imagej-legacy.version>1.2.2-SNAPSHOT</imagej-legacy.version>
 	</properties>
 
 	<repositories>
@@ -176,12 +179,6 @@
 		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>fiji</artifactId>
-		</dependency>
-		<!-- remove 'imagej-legacy' later when PR#296 gets merged -->
-		<dependency>
-			<groupId>net.imagej</groupId>
-			<artifactId>imagej-legacy</artifactId>
-			<version>1.1.1-SNAPSHOT</version>
 		</dependency>
 
 		<!-- vizu stuff -->
