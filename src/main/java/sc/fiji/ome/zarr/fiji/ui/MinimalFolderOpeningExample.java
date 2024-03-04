@@ -2,6 +2,7 @@ package sc.fiji.ome.zarr.fiji.ui;
 
 import net.imagej.Dataset;
 import net.imagej.DefaultDataset;
+import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imglib2.img.Img;
 import net.imglib2.img.array.ArrayImgs;
@@ -52,5 +53,10 @@ public class MinimalFolderOpeningExample extends AbstractIOPlugin<Dataset> {
 	@Override
 	public Class<Dataset> getDataType() {
 		return Dataset.class;
+	}
+
+	public static void main(String[] args) {
+		final ImageJ ij = new ImageJ();
+		ij.ui().showUI();
 	}
 }
