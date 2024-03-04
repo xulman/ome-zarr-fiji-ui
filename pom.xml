@@ -179,6 +179,10 @@
 			<groupId>sc.fiji</groupId>
 			<artifactId>fiji</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>imagej</artifactId>
+		</dependency>
 
 		<!-- vizu stuff -->
 		<dependency>
