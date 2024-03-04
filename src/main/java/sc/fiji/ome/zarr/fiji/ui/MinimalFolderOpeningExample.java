@@ -1,5 +1,6 @@
 package sc.fiji.ome.zarr.fiji.ui;
 
+import net.imagej.ImageJ;
 import org.scijava.io.AbstractIOPlugin;
 import org.scijava.io.IOPlugin;
 import org.scijava.io.location.Location;
@@ -37,5 +38,10 @@ public class MinimalFolderOpeningExample extends AbstractIOPlugin<Object> {
 	@Override
 	public Class<Object> getDataType() {
 		return Object.class;
+	}
+
+	public static void main(String[] args) {
+		final ImageJ ij = new ImageJ();
+		ij.ui().showUI();
 	}
 }
