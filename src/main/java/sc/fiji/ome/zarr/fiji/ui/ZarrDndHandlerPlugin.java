@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @Plugin(type = IOPlugin.class, attrs = @Attr(name = "eager"))
-public class ZarrIoServicePlugin extends AbstractIOPlugin<Object> {
+public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> {
 
 	@Parameter
 	private LogService logService;
@@ -42,26 +42,26 @@ public class ZarrIoServicePlugin extends AbstractIOPlugin<Object> {
 	public Object open(Location source) throws IOException {
 		logService.info(this.getClass().getName()+" was asked to open: "+source.getURI().getPath());
 		final FileLocation fsource = source instanceof FileLocation ? (FileLocation)source : null;
-		if (fsource == null) return null; //NB: shouldn't happen... (in theory)
-		if (!ZarrOpenDialogPlugin.canOpenThisZarrFolder(fsource.getFile(), logService)) return null;
+
+		//debugging the DnD a bit.... as both tests should never fail
+		if (fsource == null) return null;
+		if (!ZarrOpenDialogPlugin.isZarrFolder(fsource.getFile().toPath())) return null;
 
 		logService.info(this.getClass().getName()+" is going to open: "+fsource.getFile().getAbsolutePath());
 		final String futureDialogAction =
 				prefService.get(ZarrOpenDialogPlugin.class, "futureDialogAction", ZarrOpenDialogPlugin.DIAG_ALWAYS_ASK);
 		if (futureDialogAction.equals(ZarrOpenDialogPlugin.DIAG_ALWAYS_ASK)) {
-			cmdService.run(ZarrOpenDialogPlugin.class,true,
-					"zarrFolder", fsource.getFile() );
+			cmdService.run(ZarrOpenDialogPlugin.class,true, "zarrFolder", fsource.getFile() );
 		} else {
 			boolean showInIJ  = prefService.getBoolean(ZarrOpenDialogPlugin.class, "openInIJ", true);
 			boolean showInBDV = prefService.getBoolean(ZarrOpenDialogPlugin.class, "openInBDV", true);
-			ZarrOpenDialogPlugin.openZarr(prefService.context(), fsource.getFile().getAbsolutePath(),
-					showInIJ, showInBDV);
+			ZarrOpenDialogPlugin.openZarr(prefService.context(), fsource.getFile().getAbsolutePath(), showInIJ, showInBDV);
 		}
 
 		return FAKE_INPUT;
 	}
 
-	//the "innocent" product of the (hypothetical) file reading...
+	//the "innocent" product of the (hypothetical) file reading... which Fiji will not display
 	private static final Object FAKE_INPUT = new ArrayList<>(0);
 
 	@Override

@@ -15,11 +15,11 @@ import java.nio.file.Path;
 import bdv.util.BdvFunctions;
 import net.imagej.Dataset;
 
-@Plugin(type = Command.class, menuPath = "File > Import > OME.Zarr... > Open Zarr Dialog")
+@Plugin(type = Command.class, menuPath = "File > OME Zarr... > Open Dialog")
 public class ZarrOpenDialogPlugin implements Command {
 	@Parameter(style = FileWidget.DIRECTORY_STYLE,
-			label = "Folder with OME.Zarr data:",
-			description = "Please, point only on the top level folder of the OME.Zarr container.")
+			label = "Folder with OME Zarr:",
+			description = "Please, point only on the top level _folder_ of the OME Zarr container.")
 	File zarrFolder;
 
 	@Parameter(label = "Open as virtual stack:",
@@ -43,13 +43,32 @@ public class ZarrOpenDialogPlugin implements Command {
 
 	@Override
 	public void run() {
-		if ( !canOpenThisZarrFolder(zarrFolder, logService) )
-			return;
-		openZarr(logService.context(), zarrFolder.getAbsolutePath(), openInIJ, openInBDV);
+		if ( isZarrFolder( zarrFolder.toPath() ) ) {
+			openZarr(logService.context(), zarrFolder.getAbsolutePath(), openInIJ, openInBDV);
+		}
 	}
 
 
-	public static void openZarr(final Context ctx, final String topLevelPath,
+	/**
+	 * Checks if under the given folder there exists any of
+	 * the files: .zgroup, .zarray or zarr.json.
+	 * @param zarrFolder Supposedly the top-level Zarr folder.
+	 * @return True if some of the three files is found.
+	 */
+	public static boolean isZarrFolder(final Path zarrFolder) {
+		return ( Files.exists( zarrFolder.resolve( ".zgroup" ) ) || //Zarr v2
+				  Files.exists( zarrFolder.resolve( ".zarray" ) ) || //Zarr v2
+				  Files.exists( zarrFolder.resolve("zarr.json") ) ); //Zarr v3
+	}
+
+	/**
+	 * TBA
+	 * @param ctx
+	 * @param topFolderPath
+	 * @param showInFiji
+	 * @param showInBDV
+	 */
+	public static void openZarr(final Context ctx, final String topFolderPath,
 	                            final boolean showInFiji,
 	                            final boolean showInBDV) {
 
@@ -62,39 +81,8 @@ public class ZarrOpenDialogPlugin implements Command {
 		}
 
 		if (showInBDV) {
-			BdvFunctions.show( dataset, topLevelPath );
+			BdvFunctions.show( dataset, topFolderPath );
 		}
-	}
-
-
-	public static boolean isZarrFolder(final Path zarrFolder) {
-		return ( Files.exists( zarrFolder.resolve( ".zgroup" ) ) ||
-                Files.exists( zarrFolder.resolve( ".zarray" ) ) );
-	}
-
-	public static boolean canOpenThisZarrFolder(final File zarrFolder, final LogService logService) {
-		logService.debug("Considering Zarr folder: " + zarrFolder.getAbsolutePath());
-
-		if ( !isZarrFolder( zarrFolder.toPath() ) ) {
-			logService.error("The folder " + zarrFolder.getAbsolutePath()
-					+ " is not an OME.Zarr container.");
-			return false;
-		}
-
-		final boolean topLevelFolder = !isZarrFolder( zarrFolder.getParentFile().toPath() );
-		logService.debug("It is a " + (topLevelFolder ? "top-level" : "nested-level") + " folder");
-
-		if (!topLevelFolder)
-			logService.error("I can't do yet. Please, point me on top-level folder next time.");
-
-		return topLevelFolder;
-	}
-
-	public static boolean canOpenThisZarrFolder(final File zarrFolder) {
-		if ( !isZarrFolder( zarrFolder.toPath() ) )
-			return false;
-		//
-		return !isZarrFolder( zarrFolder.getParentFile().toPath() );
 	}
 
 

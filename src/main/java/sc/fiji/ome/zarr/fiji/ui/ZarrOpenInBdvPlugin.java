@@ -8,20 +8,16 @@ import org.scijava.log.LogService;
 import java.io.File;
 import bdv.util.BdvFunctions;
 
-@Plugin(type = Command.class, menuPath = "File > Import > OME.Zarr... > Open Zarr in BDV")
+@Plugin(type = Command.class, menuPath = "File > OME Zarr... > Open in BDV")
 public class ZarrOpenInBdvPlugin implements Command {
 	@Parameter(style = FileWidget.DIRECTORY_STYLE,
-			label = "Folder with OME.Zarr data:",
-			description = "Please, point only on the top level folder of the OME.Zarr container.")
+			label = "Folder with OME Zarr data:",
+			description = "Please, point only on the top level folder of the OME Zarr container.")
 	File zarrFolder;
-
-	@Parameter
-	LogService logService;
 
 	@Override
 	public void run() {
-		if (!ZarrOpenDialogPlugin.canOpenThisZarrFolder(zarrFolder, logService))
-			return;
+		if (!ZarrOpenDialogPlugin.isZarrFolder(zarrFolder.toPath())) return;
 
 		//BdvFunctions.show(singleMI.asDataset(), topLevelPath);
 		System.out.println("HELLO FROM BDV OPENER");
