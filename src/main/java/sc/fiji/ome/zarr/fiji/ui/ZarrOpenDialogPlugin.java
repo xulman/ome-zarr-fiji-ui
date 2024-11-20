@@ -12,8 +12,6 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import org.embl.mobie.io.ome.zarr.hackathon.DefaultPyramidal5DImageData;
-import org.embl.mobie.io.ome.zarr.hackathon.MultiscaleImage;
 import bdv.util.BdvFunctions;
 import net.imagej.Dataset;
 
@@ -26,11 +24,11 @@ public class ZarrOpenDialogPlugin implements Command {
 
 	@Parameter(label = "Open as virtual stack:",
 			description = "This opens the standard Fiji image viewing window.")
-	Boolean openInIJ = true;
+	boolean openInIJ = true;
 
 	@Parameter(label = "Open in BigDataViewer:",
 			description = "This opens the standard Fiji image viewing window.")
-	Boolean openInBDV = true;
+	boolean openInBDV = true;
 
 	public static final String DIAG_ALWAYS_ASK = "Always open this dialog and ask.";
 	public static final String DIAG_OPEN_DIRECTLY = "Remember the checkboxes, directly open accordingly.";
@@ -55,9 +53,7 @@ public class ZarrOpenDialogPlugin implements Command {
 	                            final boolean showInFiji,
 	                            final boolean showInBDV) {
 
-		final MultiscaleImage<?,?> mi = new MultiscaleImage<>(topLevelPath, null);
-		final DefaultPyramidal5DImageData<?,?> singleMI = new DefaultPyramidal5DImageData<>(ctx, topLevelPath, mi);
-		final Dataset dataset = singleMI.asDataset();
+		final Dataset dataset = null; //TODO!
 
 		if (showInFiji) {
 			UIService ui = ctx.getService(UIService.class);

@@ -9,9 +9,6 @@ import org.scijava.log.LogService;
 
 import java.io.File;
 
-import org.embl.mobie.io.ome.zarr.hackathon.DefaultPyramidal5DImageData;
-import org.embl.mobie.io.ome.zarr.hackathon.MultiscaleImage;
-
 @Plugin(type = Command.class, menuPath = "File > Import > OME.Zarr... > Open Zarr as Virtual Stack")
 public class ZarrOpenInIjPlugin implements Command {
 	@Parameter(style = FileWidget.DIRECTORY_STYLE,
@@ -30,10 +27,7 @@ public class ZarrOpenInIjPlugin implements Command {
 		if (!ZarrOpenDialogPlugin.canOpenThisZarrFolder(zarrFolder, logService))
 			return;
 
-		final String topLevelPath = zarrFolder.getAbsolutePath();
-		final MultiscaleImage<?, ?> mi = new MultiscaleImage<>(topLevelPath, null);
-		final DefaultPyramidal5DImageData<?, ?> singleMI =
-				new DefaultPyramidal5DImageData<>(logService.getContext(), topLevelPath, mi);
-		uiService.show(singleMI.asDataset());
+		uiService.show("HELLO FROM IJ OPENER");
+		System.out.println("HELLO FROM IJ OPENER"); //just in case...
 	}
 }
