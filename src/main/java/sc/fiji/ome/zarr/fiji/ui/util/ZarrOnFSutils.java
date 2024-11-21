@@ -2,6 +2,8 @@ package sc.fiji.ome.zarr.fiji.ui.util;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ZarrOnFSutils {
 	/**
@@ -35,5 +37,25 @@ public class ZarrOnFSutils {
 		}
 
 		return lastValidFolder;
+	}
+
+	/**
+	 * If not a top-level path is drag-and-dropped to Fiji, but instead a folder from
+	 * inside an OME Zarr folders structure, this routine returns the list of folders
+	 * that the 'shorterPath' would need to traverse to arrive to the 'longerPath'.
+	 *
+	 * @param longerPath Target path, presumably the top-level OME Zarr folder.
+	 * @param shorterPath Starting path, under which folders need to be opened to reach the 'longerPath'.
+	 * @return An ordered list of folders, or an empty list if no solution was found.
+	 */
+	public static List<String> listPathDifferences(final Path longerPath, final Path shorterPath) {
+		List<String> diffPathElems = new LinkedList<>();
+		Path currPath = longerPath;
+		while ( !currPath.equals(shorterPath) ) {
+			diffPathElems.add(0, currPath.getFileName().toString());
+			currPath = currPath.getParent();
+			//NB: OS-agnostic finding of the difference of the folders
+		}
+		return diffPathElems;
 	}
 }
