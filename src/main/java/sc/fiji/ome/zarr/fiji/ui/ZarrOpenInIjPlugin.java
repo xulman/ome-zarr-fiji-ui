@@ -5,7 +5,7 @@ import org.scijava.plugin.Plugin;
 import org.scijava.plugin.Parameter;
 import org.scijava.ui.UIService;
 import org.scijava.widget.FileWidget;
-import org.scijava.log.LogService;
+import sc.fiji.ome.zarr.fiji.ui.util.ZarrOnFSutils;
 
 import java.io.File;
 
@@ -21,7 +21,7 @@ public class ZarrOpenInIjPlugin implements Command {
 
 	@Override
 	public void run() {
-		if (!ZarrOpenDialogPlugin.isZarrFolder(zarrFolder.toPath())) return;
+		if (!ZarrOnFSutils.isZarrFolder(zarrFolder.toPath())) return;
 
 		uiService.show("HELLO FROM IJ OPENER");
 		System.out.println("HELLO FROM IJ OPENER"); //just in case...

@@ -14,6 +14,7 @@ import java.nio.file.Path;
 
 import bdv.util.BdvFunctions;
 import net.imagej.Dataset;
+import sc.fiji.ome.zarr.fiji.ui.util.ZarrOnFSutils;
 
 @Plugin(type = Command.class, menuPath = "File > OME Zarr... > Open Dialog")
 public class ZarrOpenDialogPlugin implements Command {
@@ -43,23 +44,12 @@ public class ZarrOpenDialogPlugin implements Command {
 
 	@Override
 	public void run() {
-		if ( isZarrFolder( zarrFolder.toPath() ) ) {
-			openZarr(logService.context(), zarrFolder.getAbsolutePath(), openInIJ, openInBDV);
+		Path rootZarrPath = ZarrOnFSutils.findRootFolder( zarrFolder.toPath() );
+		if ( rootZarrPath != null) {
+			openZarr(logService.context(), rootZarrPath.toAbsolutePath().toString(), openInIJ, openInBDV);
 		}
 	}
 
-
-	/**
-	 * Checks if under the given folder there exists any of
-	 * the files: .zgroup, .zarray or zarr.json.
-	 * @param zarrFolder Supposedly the top-level Zarr folder.
-	 * @return True if some of the three files is found.
-	 */
-	public static boolean isZarrFolder(final Path zarrFolder) {
-		return ( Files.exists( zarrFolder.resolve( ".zgroup" ) ) || //Zarr v2
-				  Files.exists( zarrFolder.resolve( ".zarray" ) ) || //Zarr v2
-				  Files.exists( zarrFolder.resolve("zarr.json") ) ); //Zarr v3
-	}
 
 	/**
 	 * TBA

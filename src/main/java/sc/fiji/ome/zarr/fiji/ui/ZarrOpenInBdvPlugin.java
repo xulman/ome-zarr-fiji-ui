@@ -4,9 +4,9 @@ import org.scijava.command.Command;
 import org.scijava.plugin.Plugin;
 import org.scijava.plugin.Parameter;
 import org.scijava.widget.FileWidget;
-import org.scijava.log.LogService;
+import sc.fiji.ome.zarr.fiji.ui.util.ZarrOnFSutils;
+
 import java.io.File;
-import bdv.util.BdvFunctions;
 
 @Plugin(type = Command.class, menuPath = "File > OME Zarr... > Open in BDV")
 public class ZarrOpenInBdvPlugin implements Command {
@@ -17,7 +17,7 @@ public class ZarrOpenInBdvPlugin implements Command {
 
 	@Override
 	public void run() {
-		if (!ZarrOpenDialogPlugin.isZarrFolder(zarrFolder.toPath())) return;
+		if (!ZarrOnFSutils.isZarrFolder(zarrFolder.toPath())) return;
 
 		//BdvFunctions.show(singleMI.asDataset(), topLevelPath);
 		System.out.println("HELLO FROM BDV OPENER");

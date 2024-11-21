@@ -11,6 +11,7 @@ import org.scijava.io.IOPlugin;
 import org.scijava.io.AbstractIOPlugin;
 import org.scijava.io.location.FileLocation;
 import org.scijava.io.location.Location;
+import sc.fiji.ome.zarr.fiji.ui.util.ZarrOnFSutils;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -34,7 +35,7 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> {
 		logService.info(this.getClass().getName()+" was questioned: "+sourcePath);
 
 		if (!(source instanceof FileLocation)) return false;
-		if ( !ZarrOpenDialogPlugin.isZarrFolder( Paths.get(source.getURI()) ) ) return false;
+		if ( !ZarrOnFSutils.isZarrFolder( Paths.get(source.getURI()) ) ) return false;
 		return true;
 	}
 
@@ -45,7 +46,7 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> {
 
 		//debugging the DnD a bit.... as both tests should never fail
 		if (fsource == null) return null;
-		if (!ZarrOpenDialogPlugin.isZarrFolder(fsource.getFile().toPath())) return null;
+		if (!ZarrOnFSutils.isZarrFolder(fsource.getFile().toPath())) return null;
 
 		logService.info(this.getClass().getName()+" is going to open: "+fsource.getFile().getAbsolutePath());
 		final String futureDialogAction =
