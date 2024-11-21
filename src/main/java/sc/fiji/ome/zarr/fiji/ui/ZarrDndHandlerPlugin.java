@@ -1,11 +1,10 @@
 package sc.fiji.ome.zarr.fiji.ui;
 
+import org.janelia.saalfeldlab.n5.ij.N5Importer;
 import org.scijava.plugin.Attr;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
 import org.scijava.log.LogService;
-import org.scijava.command.CommandService;
-import org.scijava.prefs.PrefService;
 
 import org.scijava.io.IOPlugin;
 import org.scijava.io.AbstractIOPlugin;
@@ -14,6 +13,7 @@ import org.scijava.io.location.Location;
 import sc.fiji.ome.zarr.fiji.ui.util.ZarrOnFSutils;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
@@ -22,12 +22,6 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> {
 
 	@Parameter
 	private LogService logService;
-
-	@Parameter
-	private CommandService cmdService;
-
-	@Parameter
-	private PrefService prefService;
 
 	@Override
 	public boolean supportsOpen(Location source) {
@@ -48,17 +42,16 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> {
 		if (fsource == null) return null;
 		if (!ZarrOnFSutils.isZarrFolder(fsource.getFile().toPath())) return null;
 
-		logService.info(this.getClass().getName()+" is going to open: "+fsource.getFile().getAbsolutePath());
-		final String futureDialogAction =
-				prefService.get(ZarrOpenDialogPlugin.class, "futureDialogAction", ZarrOpenDialogPlugin.DIAG_ALWAYS_ASK);
-		if (futureDialogAction.equals(ZarrOpenDialogPlugin.DIAG_ALWAYS_ASK)) {
-			cmdService.run(ZarrOpenDialogPlugin.class,true, "zarrFolder", fsource.getFile() );
-		} else {
-			boolean showInIJ  = prefService.getBoolean(ZarrOpenDialogPlugin.class, "openInIJ", true);
-			boolean showInBDV = prefService.getBoolean(ZarrOpenDialogPlugin.class, "openInBDV", true);
-			ZarrOpenDialogPlugin.openZarr(prefService.context(), fsource.getFile().getAbsolutePath(), showInIJ, showInBDV);
-		}
+		//NB: shouldn't be null as fsource is already a valid OME Zarr path (see just above)
+		final Path zarrRootPath = ZarrOnFSutils.findRootFolder(fsource.getFile().toPath());
 
+		final String zarrRootStrPath = zarrRootPath.toAbsolutePath().toString();
+		logService.info(this.getClass().getName()+" is going to open: "+zarrRootStrPath);
+
+		N5Importer importer = new N5Importer();
+		importer.runWithDialog(zarrRootStrPath);
+
+		logService.info(this.getClass().getName()+" opened.");
 		return FAKE_INPUT;
 	}
 
