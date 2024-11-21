@@ -1,5 +1,12 @@
 package sc.fiji.ome.zarr.fiji.ui;
 
+import net.imagej.ImageJ;
+import net.imglib2.cache.img.CachedCellImg;
+import net.imglib2.img.Img;
+import org.janelia.saalfeldlab.n5.DatasetAttributes;
+import org.janelia.saalfeldlab.n5.N5Reader;
+import org.janelia.saalfeldlab.n5.imglib2.N5Utils;
+import org.janelia.saalfeldlab.n5.universe.N5Factory;
 import org.scijava.Context;
 import org.scijava.command.Command;
 import org.scijava.plugin.Plugin;
@@ -62,6 +69,31 @@ public class ZarrOpenDialogPlugin implements Command {
 	                            final boolean showInFiji,
 	                            final boolean showInBDV) {
 
+		int sepPos = topFolderPath.lastIndexOf('/');
+		String rootPath = topFolderPath.substring(0,sepPos);
+		String group = topFolderPath.substring(sepPos+1)+"/s0";
+		System.out.println(rootPath+" -- "+group);
+
+		N5Reader reader = new N5Factory().openReader(rootPath);
+
+		System.out.println("test1 = "+reader.datasetExists("djksalfdjs"));
+		System.out.println("test2 = "+reader.datasetExists("CTC_trainTrif02_TP35"));
+		System.out.println("test3 = "+reader.datasetExists("CTC_trainTrif02_TP35/s2"));
+
+		System.out.println("-------");
+		for (String ds : reader.deepListDatasets("")) System.out.println(ds);
+		System.out.println("-------");
+		for (String ds : reader.list("")) System.out.println(ds);
+		System.out.println("-------");
+
+
+		DatasetAttributes attrs = reader.getDatasetAttributes(group);
+		printLongArray(attrs.getDimensions());
+
+		Img<?> i = N5Utils.open(reader, group);
+		printLongArray(i.dimensionsAsLongArray());
+
+/*
 		final Dataset dataset = null; //TODO!
 
 		if (showInFiji) {
@@ -73,11 +105,24 @@ public class ZarrOpenDialogPlugin implements Command {
 		if (showInBDV) {
 			BdvFunctions.show( dataset, topFolderPath );
 		}
+*/
+	}
+
+	public static void printLongArray(long[] a) {
+		System.out.print("[");
+		for (long val : a) {
+			System.out.print(val+",");
+		}
+		System.out.print("]");
 	}
 
 
 	public static void main(String[] args) {
-		final String path = "/home/ulman/M_TRIF_testSmall/testNew_v4.zarr";
+		ImageJ ij = new ImageJ();
+		ij.ui().showUI();
+
+		//final String path = "/home/ulman/M_TRIF_testSmall/testNew_v4.zarr";
+		final String path = "/temp/Zurich.hackathon.testData/maybe_top_level.zarr/CTC_trainTrif02_TP35";
 		openZarr(new Context(), path, true, true);
 	}
 }
