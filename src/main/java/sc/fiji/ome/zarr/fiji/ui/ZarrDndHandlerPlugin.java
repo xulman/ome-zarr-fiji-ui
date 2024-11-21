@@ -42,14 +42,15 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> {
 		if (fsource == null) return null;
 		if (!ZarrOnFSutils.isZarrFolder(fsource.getFile().toPath())) return null;
 
-		//NB: shouldn't be null as fsource is already a valid OME Zarr path (see just above)
-		final Path zarrRootPath = ZarrOnFSutils.findRootFolder(fsource.getFile().toPath());
+		final Path droppedPath = fsource.getFile().toPath();
+		final Path zarrRootPath = ZarrOnFSutils.findRootFolder(droppedPath);
+		//NB: shouldn't be null as fsource is already a valid OME Zarr path (see above)
 
 		final String zarrRootStrPath = zarrRootPath.toAbsolutePath().toString();
 		logService.info(this.getClass().getName()+" is going to open: "+zarrRootStrPath);
 
 		N5Importer importer = new N5Importer();
-		importer.runWithDialog(zarrRootStrPath);
+		importer.runWithDialog(zarrRootStrPath, ZarrOnFSutils.listPathDifferences(droppedPath,zarrRootPath));
 
 		logService.info(this.getClass().getName()+" opened.");
 		return FAKE_INPUT;
