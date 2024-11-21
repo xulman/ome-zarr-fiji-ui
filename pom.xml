@@ -174,6 +174,15 @@
 			<artifactId>fiji</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.janelia.saalfeldlab</groupId>
+			<artifactId>n5-ij</artifactId>
+			<version>4.2.6-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.janelia.saalfeldlab</groupId>
+			<artifactId>n5-universe</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>bigdataviewer-vistools</artifactId>
 		</dependency>
