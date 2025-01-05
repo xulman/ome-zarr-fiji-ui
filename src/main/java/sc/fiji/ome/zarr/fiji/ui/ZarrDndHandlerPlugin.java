@@ -12,6 +12,7 @@ import org.scijava.io.location.FileLocation;
 import org.scijava.io.location.Location;
 import sc.fiji.ome.zarr.fiji.ui.util.ZarrOnFSutils;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -114,8 +115,31 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> implements Ru
 		wasAltKeyDown = false;
 		//NB: this waiting period below is here only to give keyboard events
 		//    a chance to notify us that the ALT key has been released
+		openNotificationWindow();
 		try { Thread.sleep(PERIOD_FOR_DETECTING_ALT_KEY); } catch (InterruptedException e) { /* empty */ }
+		closeNotificationWindow();
 		openRecentlyDroppedPath();
 	}
 
+	private JFrame notificationWindow = null;
+	private void openNotificationWindow() {
+		if (notificationWindow == null) {
+			notificationWindow = new JFrame("Zarr Drag-and-Drop");
+			notificationWindow.add(new JLabel("<html><br/><center><i>Opening...</i></center><br/>( <b>Alt+DnD</b> opens in <b>BigDataViewer</b> directly. )<br/></html>"));
+			notificationWindow.pack();
+
+			//window placement
+			final Rectangle currentScreenSize = notificationWindow.getGraphicsConfiguration().getBounds();
+			notificationWindow.setLocation(
+					(int)currentScreenSize.getCenterX() - notificationWindow.getSize().width/2,
+					(int)currentScreenSize.getCenterY() - notificationWindow.getSize().height/2
+			);
+			if (notificationWindow.isAlwaysOnTopSupported()) notificationWindow.setAlwaysOnTop(true);
+		}
+		notificationWindow.setVisible(true);
+	}
+
+	private void closeNotificationWindow() {
+		notificationWindow.setVisible(false);
+	}
 }
