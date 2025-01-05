@@ -20,25 +20,31 @@ import java.util.ArrayList;
 @Plugin(type = IOPlugin.class, attrs = @Attr(name = "eager"))
 public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> {
 
+	// ========================= logging stuff =========================
 	@Parameter
 	private LogService logService;
 
+	//NB: Change _only_ here to the wanted log level: info() vs. debug()
+	private final Reporter log = (msg) -> logService.info(this.getClass().getName()+" "+msg);
+	private interface Reporter { void message(String msg); }
+
+	// ========================= IOPlugin stuff =========================
 	@Override
 	public boolean supportsOpen(Location source) {
 		final String sourcePath = source.getURI().getPath();
-		logService.info(this.getClass().getName()+" was questioned: "+sourcePath);
+		log.message("was questioned: "+sourcePath);
 
 		if (!(source instanceof FileLocation)) return false;
-		if ( !ZarrOnFSutils.isZarrFolder( Paths.get(source.getURI()) ) ) return false;
+		if (!ZarrOnFSutils.isZarrFolder( Paths.get(source.getURI()) )) return false;
 		return true;
 	}
 
 	@Override
 	public Object open(Location source) throws IOException {
-		logService.info(this.getClass().getName()+" was asked to open: "+source.getURI().getPath());
+		log.message("was asked to open: "+source.getURI().getPath());
 		final FileLocation fsource = source instanceof FileLocation ? (FileLocation)source : null;
 
-		//debugging the DnD a bit.... as both tests should never fail
+		//debugging the DnD a bit.... but both tests should never fail
 		if (fsource == null) return null;
 		if (!ZarrOnFSutils.isZarrFolder(fsource.getFile().toPath())) return null;
 
