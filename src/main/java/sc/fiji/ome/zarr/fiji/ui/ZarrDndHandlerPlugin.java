@@ -18,7 +18,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @Plugin(type = IOPlugin.class, attrs = @Attr(name = "eager"))
-public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> {
+public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> implements Runnable {
 
 	// ========================= logging stuff =========================
 	@Parameter
@@ -48,17 +48,13 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> {
 		if (fsource == null) return null;
 		if (!ZarrOnFSutils.isZarrFolder(fsource.getFile().toPath())) return null;
 
-		final Path droppedPath = fsource.getFile().toPath();
-		final Path zarrRootPath = ZarrOnFSutils.findRootFolder(droppedPath);
+		this.droppedInPath = fsource.getFile().toPath();
 		//NB: shouldn't be null as fsource is already a valid OME Zarr path (see above)
 
-		final String zarrRootStrPath = zarrRootPath.toAbsolutePath().toString();
-		logService.info(this.getClass().getName()+" is going to open: "+zarrRootStrPath);
-
-		N5Importer importer = new N5Importer();
-		importer.runWithDialog(zarrRootStrPath, ZarrOnFSutils.listPathDifferences(droppedPath,zarrRootPath));
-
-		logService.info(this.getClass().getName()+" opened.");
+		//not going to display anything now, we instead start a thread that delays itself a bit
+		//and only opens after a waiting period; the waiting period is used to detect whether
+		//the ALT key has been released (that is, if it had been pressed during the drag-and-drop operation)
+		new Thread(this).start();
 		return FAKE_INPUT;
 	}
 
@@ -69,4 +65,28 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> {
 	public Class<Object> getDataType() {
 		return Object.class;
 	}
+
+	// ========================= the actual opening of the dropped-in path =========================
+	private Path droppedInPath = null;
+
+	private void openRecentlyDroppedPath() {
+		//do anything only when the argument is valid
+		if (droppedInPath != null) {
+			final Path zarrRootPath = ZarrOnFSutils.findRootFolder(droppedInPath);
+			final String zarrRootPathAsStr = zarrRootPath.toAbsolutePath().toString();
+			log.message("is opening now: " + zarrRootPathAsStr);
+		}
+
+		//flag that this argument is processed
+		droppedInPath = null;
+	}
+
+	private static final long PERIOD_FOR_DETECTING_ALT_KEY = 2000; //millis
+
+	@Override
+	public void run() {
+		try { Thread.sleep(PERIOD_FOR_DETECTING_ALT_KEY); } catch (InterruptedException e) { /* empty */ }
+		openRecentlyDroppedPath();
+	}
+
 }
