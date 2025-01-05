@@ -40,6 +40,24 @@ public class ZarrOnFSutils {
 	}
 
 	/**
+	 * Given several datasets, which often are spatially downscaled variants
+	 * of each other (aka resolution pyramids), it chooses the first one whose
+	 * name ends with 's0' -- typically signifying the best spatial resolution,
+	 * the finest variant. If multiple such exists in the input array, the first
+	 * one is taken. If none such is found, the first element from the input array
+	 * is returned.
+	 *
+	 * @param datasets Non-null (not test thought!) array with "s?" endings.
+	 * @return First array item with "s0" or just the first array item.
+	 */
+	public static String findHighestResByName(final String[] datasets) {
+		for (String s : datasets) {
+			if (s.endsWith("s0")) return s;
+		}
+		return datasets[0];
+	}
+
+	/**
 	 * If not a top-level path is drag-and-dropped to Fiji, but instead a folder from
 	 * inside an OME Zarr folders structure, this routine returns the list of folders
 	 * that the 'shorterPath' would need to traverse to arrive to the 'longerPath'.
