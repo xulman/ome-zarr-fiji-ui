@@ -81,7 +81,8 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> implements Ru
 		//do anything only when the argument is valid
 		if (droppedInPath != null) {
 			final Path zarrRootPath = ZarrOnFSutils.findRootFolder(droppedInPath);
-			final String zarrRootPathAsStr = zarrRootPath.toAbsolutePath().toString();
+			final String zarrRootPathAsStr = (isWindows() ? "/" : "")
+					+ zarrRootPath.toAbsolutePath().toString().replaceAll("\\\\","/");
 			log.message("is opening now: " + zarrRootPathAsStr);
 
 			if (wasAltKeyDown) {
@@ -97,6 +98,11 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> implements Ru
 
 		//flag that this argument is processed
 		droppedInPath = null;
+	}
+
+	public static boolean isWindows() {
+		final String myOS = System.getProperty("os.name").toLowerCase();
+		return !( myOS.contains( "mac" ) || myOS.contains( "nux" ) || myOS.contains( "nix" ) );
 	}
 
 	private static boolean wasAltKeyDown = false;
