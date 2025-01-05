@@ -12,6 +12,8 @@ import org.scijava.io.location.FileLocation;
 import org.scijava.io.location.Location;
 import sc.fiji.ome.zarr.fiji.ui.util.ZarrOnFSutils;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -81,10 +83,37 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> implements Ru
 		droppedInPath = null;
 	}
 
+	private static boolean wasAltKeyDown = false;
 	private static final long PERIOD_FOR_DETECTING_ALT_KEY = 2000; //millis
 
+	// ========================= stuff to detect if ALT was pressed during the drag-and-drop =========================
+	// ------------------------- keyboard monitor -------------------------
+	private static boolean isAlreadyRegisteredKeyHandler = false;
+
+	public ZarrDndHandlerPlugin() {
+		super();
+
+		//install a keyboard events monitor, but only once!
+		if (!isAlreadyRegisteredKeyHandler) {
+			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(e -> {
+				if (e.getKeyCode() == KeyEvent.VK_ALT) {
+					//...monitor only if the ALT key did some action
+					wasAltKeyDown = e.getID() == KeyEvent.KEY_RELEASED;
+				}
+				return false;
+			});
+			isAlreadyRegisteredKeyHandler = true;
+		}
+	}
+
+	// ========================= stuff to detect if ALT was pressed during the drag-and-drop =========================
+	// ------------------------- separate thread that fires GUI to keep application's focus to
+	//                           allow its keyboard monitor to read-out anything while waiting a bit -------------------------
 	@Override
 	public void run() {
+		wasAltKeyDown = false;
+		//NB: this waiting period below is here only to give keyboard events
+		//    a chance to notify us that the ALT key has been released
 		try { Thread.sleep(PERIOD_FOR_DETECTING_ALT_KEY); } catch (InterruptedException e) { /* empty */ }
 		openRecentlyDroppedPath();
 	}
