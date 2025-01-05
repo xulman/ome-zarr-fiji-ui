@@ -1,6 +1,11 @@
 package sc.fiji.ome.zarr.fiji.ui;
 
+import bdv.util.BdvFunctions;
+import net.imglib2.img.Img;
+import org.janelia.saalfeldlab.n5.N5Reader;
 import org.janelia.saalfeldlab.n5.ij.N5Importer;
+import org.janelia.saalfeldlab.n5.imglib2.N5Utils;
+import org.janelia.saalfeldlab.n5.universe.N5Factory;
 import org.scijava.plugin.Attr;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -78,6 +83,16 @@ public class ZarrDndHandlerPlugin extends AbstractIOPlugin<Object> implements Ru
 			final Path zarrRootPath = ZarrOnFSutils.findRootFolder(droppedInPath);
 			final String zarrRootPathAsStr = zarrRootPath.toAbsolutePath().toString();
 			log.message("is opening now: " + zarrRootPathAsStr);
+
+			if (wasAltKeyDown) {
+				N5Reader reader = new N5Factory().openReader(zarrRootPathAsStr);
+				String dataset = ZarrOnFSutils.findHighestResByName( reader.deepListDatasets("") );
+				BdvFunctions.show((Img<?>)N5Utils.open(reader, dataset), dataset);
+			} else {
+				new N5Importer().runWithDialog(zarrRootPathAsStr,
+						ZarrOnFSutils.listPathDifferences(droppedInPath, zarrRootPath));
+			}
+			log.message("opened.");
 		}
 
 		//flag that this argument is processed
