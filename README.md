@@ -1,3 +1,7 @@
+**This repository is now obsolete in favor of its [successor at GH/BioImageTools/ome-zarr-fiji-java](https://github.com/BioImageTools/ome-zarr-fiji-java/).**
+
+---------------
+
 # About
 Here's the home of the Fiji wrapping plugins that bring
 [OME.Zarr (at specs 0.4)](https://ngff.openmicroscopy.org/0.4/)
